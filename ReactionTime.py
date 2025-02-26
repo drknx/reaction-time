@@ -1,43 +1,40 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 import pyautogui
 import time
 import webbrowser
+import random
 
-webbrowser.open('https://www.humanbenchmark.com/tests/reactiontime',
-                new=2)
-time.sleep(3)  # time it takes for webbrowser to open, change this to match your pc
+cpuSaver = 0.05 # delay to prevent extra load on the cpu
+reactionTime = random.uniform(0,1) # reaction time (lowest, highest)
 
-delay = 0  # change this for delay in seconds
-lvls = 5  # change this for the amount of levels you want the bot to complete
+webbrowser.open('https://www.humanbenchmark.com/tests/reactiontime', new=2)
+time.sleep(3) # change to how much time it takes to open up the site
 
-(width, height) = pyautogui.size()
-print (width, height)
-width = int(width / 2)
-height = int(height / 4)
-pyautogui.moveTo(width, height)
+width, height = pyautogui.size()
+width, height = width // 7, height // 7
 
-# gets the current hex color of the game
+pyautogui.FAILSAFE = True
 
-color = pyautogui.pixel(width, height)
-hexColor = '%02x%02x%02x' % color
-print hexColor
-if hexColor == '0089ce':
-    pyautogui.click()
-    for x in range(lvls):
+def is_mostly_green(rgb):
+    r, g, b = rgb
+    return g > r and g > b  # detects green
 
-        # checks every time if the color is not green, when it is green it delays and then clicks the screen and waits for the next round
+# if green is detected, then clicks
+while True:
+    try:
+        color = pyautogui.pixel(width, height)
 
-        while hexColor != '18d971':
-            color = pyautogui.pixel(width, height)
-            hexColor = '%02x%02x%02x' % color
-        print hexColor
-        time.sleep(delay)
-        pyautogui.click()
-        if x != 4:
+        if is_mostly_green(color):
+            time.sleep(reactionTime) # clicked
             pyautogui.click()
+            print("click")
 
-        hexColor = ''
-else:
-    pyautogui.alert(text='Please have the tab fullscreened on your primary monitor, values may not work for resolutions other than 1920 by 1080'
-                    , title='Game not detected!', button='Ok')
+            # b
+            while is_mostly_green(pyautogui.pixel(width, height)):
+                time.sleep(cpuSaver)
+
+        time.sleep(cpuSaver)
+
+    except Exception as e:
+        print(f"Error: {e}")
+        time.sleep(cpuSaver)
+

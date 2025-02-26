@@ -10,7 +10,7 @@ webbrowser.open('https://www.humanbenchmark.com/tests/reactiontime', new=2)
 time.sleep(3) # change to how much time it takes to open up the site
 
 width, height = pyautogui.size()
-width, height = width // 7, height // 7
+width, height = width // 2, height // 4
 
 pyautogui.FAILSAFE = True
 
